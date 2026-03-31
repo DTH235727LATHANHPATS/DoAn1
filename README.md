@@ -8,14 +8,16 @@ Phần mềm quản lý quán cafe viết bằng WinForms.
 - Entity Framework Core
 - SQL Server
 ## Buổi 1
-- Tạo project, entity
+- Tạo project, entity, app.conflig
 - Tạo hai form Loại sản phẩm và sản phẩm 
 ## Những lỗi cần khắc phục
 - Chưa đồng nhất kiểu dữ liệu giữa hai entity có mối quan hệ với nhau
 - Chưa thêm được hình ảnh cho sản phẩm 
+- Chưa add thành công Migrations
 ## khắc phục
 - Sửa lại kiểu dữ liệu cho đồng nhất
 - Kiểm tra lại properties của Datagirdview
+- Kiểm tra lại appconflig, xem lại SQL trên máy để add thành công Migrations
 ## Tác giả
 LA THANH PATS
 ## ⚙️ Cài đặt

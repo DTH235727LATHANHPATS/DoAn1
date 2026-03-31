@@ -16,7 +16,10 @@ Phần mềm quản lý quán cafe viết bằng WinForms.
 ## khắc phục
 - Sửa lại kiểu dữ liệu cho đồng nhất
 - Kiểm tra lại properties của Datagirdview
+## Tác giả
+LA THANH PATS
 ## ⚙️ Cài đặt
 ```bash
 git clone https://github.com/your-username/QuanLyCoffe.git
+
 

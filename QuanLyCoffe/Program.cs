@@ -1,4 +1,5 @@
 using QuanLyCoffe.Forms;
+using QuanLyCoffe.Reports;
 
 namespace QuanLyCoffe
 {
@@ -13,7 +14,7 @@ namespace QuanLyCoffe
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new frmSanPham());
+            Application.Run(new frmThongKeSanPham());
         }
     }
 }

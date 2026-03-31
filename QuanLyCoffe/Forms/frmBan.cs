@@ -8,16 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BC = BCrypt.Net.BCrypt;
 
 namespace QuanLyCoffe.Forms
 {
-    public partial class frmLoaiSanPham : Form
+    public partial class frmBan : Form
     {
         QLCFDbContext context = new QLCFDbContext(); // Khởi tạo biến ngữ cảnh CSDL
         bool xuLyThem = false; // Kiểm tra có nhấn vào nút Thêm hay không?
         int id; // Lấy mã loại sản phẩm (dùng cho Sửa và Xóa)
-        public frmLoaiSanPham()
+        public frmBan()
         {
             InitializeComponent();
         }
@@ -25,22 +24,27 @@ namespace QuanLyCoffe.Forms
         {
             btnLuu.Enabled = giaTri;
             btnHuyBo.Enabled = giaTri;
-            txtTenLoai.Enabled = giaTri;
+            txtTenBan.Enabled = giaTri;
+            txtTrangThai.Enabled = giaTri;
             btnThem.Enabled = !giaTri;
             btnSua.Enabled = !giaTri;
             btnXoa.Enabled = !giaTri;
+            btnTimKiem.Enabled = !giaTri;
+            btnNhap.Enabled = !giaTri;
+            btnXuat.Enabled = !giaTri;
         }
 
-        private void frmLoaiSanPham_Load(object sender, EventArgs e)
+        private void frmBan_Load(object sender, EventArgs e)
         {
-
             BatTatChucNang(false);
-            List<LoaiSanPham> lsp = new List<LoaiSanPham>();
-            lsp = context.LoaiSanPham.ToList();
+            List<Ban> lsp = new List<Ban>();
+            lsp = context.Ban.ToList();
             BindingSource bindingSource = new BindingSource();
             bindingSource.DataSource = lsp;
-            txtTenLoai.DataBindings.Clear();
-            txtTenLoai.DataBindings.Add("Text", bindingSource, "TenLoai", false, DataSourceUpdateMode.Never);
+            txtTenBan.DataBindings.Clear();
+            txtTenBan.DataBindings.Add("Text", bindingSource, "TenBan", false, DataSourceUpdateMode.Never);
+            txtTrangThai.DataBindings.Clear();
+            txtTrangThai.DataBindings.Add("Text", bindingSource, "TrangThai", false, DataSourceUpdateMode.Never);
             dataGridView.DataSource = bindingSource;
         }
 
@@ -48,7 +52,8 @@ namespace QuanLyCoffe.Forms
         {
             xuLyThem = true;
             BatTatChucNang(true);
-            txtTenLoai.Clear();
+            txtTenBan.Clear();
+            txtTrangThai.Clear();
         }
 
         private void btnSua_Click(object sender, EventArgs e)
@@ -60,54 +65,56 @@ namespace QuanLyCoffe.Forms
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtTenLoai.Text))
-                MessageBox.Show("Vui lòng nhập tên loại sản phẩm?", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (string.IsNullOrWhiteSpace(txtTenBan.Text))
+                MessageBox.Show("Vui lòng nhập tên bàn?", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else
             {
                 if (xuLyThem)
                 {
-                    LoaiSanPham lsp = new LoaiSanPham();
-                    lsp.TenLoai = txtTenLoai.Text;
-                    context.LoaiSanPham.Add(lsp);
+                    Ban lsp = new Ban();
+                    lsp.TenBan = txtTenBan.Text;
+                    lsp.TrangThai = txtTrangThai.Text;
+                    context.Ban.Add(lsp);
                     context.SaveChanges();
                 }
                 else
                 {
-                    LoaiSanPham lsp = context.LoaiSanPham.Find(id);
+                    Ban lsp = context.Ban.Find(id);
                     if (lsp != null)
                     {
-                        lsp.TenLoai = txtTenLoai.Text;
-                        context.LoaiSanPham.Update(lsp);
+                        lsp.TenBan = txtTenBan.Text;
+                        lsp.TrangThai = txtTrangThai.Text;
+                        context.Ban.Update(lsp);
                         context.SaveChanges();
                     }
                 }
-                frmLoaiSanPham_Load(sender, e);
+                frmBan_Load(sender, e);
             }
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Xác nhận xóa loại sản phẩm?", "Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Xác nhận xóa bàn?", "Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value.ToString());
-                LoaiSanPham lsp = context.LoaiSanPham.Find(id);
+                Ban lsp = context.Ban.Find(id);
                 if (lsp != null)
                 {
-                    context.LoaiSanPham.Remove(lsp);
+                    context.Ban.Remove(lsp);
                 }
                 context.SaveChanges();
-                frmLoaiSanPham_Load(sender, e);
+                frmBan_Load(sender, e);
             }
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
         {
-            frmLoaiSanPham_Load(sender, e);
+            frmBan_Load(sender, e);
         }
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            this.Close();
         }
     }
 }

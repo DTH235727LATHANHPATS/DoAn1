@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;           // Cần để dùng Path, File, Directory
+using System.Drawing;      // Cần để dùng Image, Bitmap
+using System.Drawing.Imaging; // Hỗ trợ định dạng ảnh
 
 namespace QuanLyCoffe.Forms
 {
@@ -73,36 +76,61 @@ namespace QuanLyCoffe.Forms
 
             numGia.DataBindings.Clear();
             numGia.DataBindings.Add("Value", bindingSource, "Gia", false, DataSourceUpdateMode.Never);
-            picHinhAnh.DataBindings.Clear();
-            Binding hinhAnh = new Binding("ImageLocation", bindingSource, "HinhAnh");
-            hinhAnh.Format += (s, e) =>
-            { 
-                if (e.Value != null)
-                {
-                    e.Value = Path.Combine(imagesFolder, e.Value.ToString());
-                }
-            };
-            picHinhAnh.DataBindings.Add(hinhAnh);
             dataGridView.DataSource = bindingSource;
         }
         private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (dataGridView.Columns[e.ColumnIndex].Name == "HinhAnh" && e.Value != null)
+            // Kiểm tra đúng Tên cột (Name) trong Designer
+            if (dataGridView.Columns[e.ColumnIndex].Name == "HinhAnh")
             {
-                string path = Path.Combine(imagesFolder, e.Value.ToString());
-
-                if (File.Exists(path))
+                try
                 {
-                    Image img = Image.FromFile(path);
-                    e.Value = new Bitmap(img, 24, 24);
+                    // Lấy tên file ảnh từ nguồn dữ liệu (List DanhSachSanPham)
+                    var rowData = dataGridView.Rows[e.RowIndex].DataBoundItem as DanhSachSanPham;
+
+                    if (rowData != null && !string.IsNullOrWhiteSpace(rowData.HinhAnh))
+                    {
+                        string fullPath = Path.Combine(imagesFolder, rowData.HinhAnh);
+
+                        if (File.Exists(fullPath))
+                        {
+                            using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                            {
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    fs.CopyTo(ms);
+                                    ms.Seek(0, SeekOrigin.Begin);
+                                    using (Image temp = Image.FromStream(ms))
+                                    {
+                                        // Gán trực tiếp vào e.Value
+                                        e.Value = new Bitmap(temp, 32, 32); // Thử để 32x32 cho dễ nhìn
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            e.Value = null; // Hoặc một ảnh mặc định "No Image"
+                        }
+                    }
+                    else
+                    {
+                        e.Value = null;
+                    }
+
+                    // Dòng này bắt buộc phải có để Grid hiển thị ảnh
+                    e.FormattingApplied = true;
                 }
-                else
+                catch
                 {
                     e.Value = null;
                 }
             }
         }
-
+        private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
+        }
         private void btnThem_Click(object sender, EventArgs e)
         {
             xuLyThem = true;
@@ -119,7 +147,7 @@ namespace QuanLyCoffe.Forms
 
             xuLyThem = false;
             BatTatChucNang(true);
-            id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value.ToString());
+            id = Convert.ToInt32(dataGridView.CurrentRow.Cells["colID"].Value.ToString());
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
@@ -151,6 +179,11 @@ namespace QuanLyCoffe.Forms
                     SanPham sp = context.SanPham.Find(id);
                     if (sp != null)
                     {
+                        sp.LoaiSanPhamID = Convert.ToInt32(cboTenLoai.SelectedValue);
+                        sp.TenSanPham = txtTenSanPham.Text;
+                        sp.Gia = Convert.ToInt32(numGia.Value);
+                        sp.MoTa = txtMoTa.Text;
+
                         context.SanPham.Update(sp);
                         context.SaveChanges();
                     }
@@ -164,7 +197,7 @@ namespace QuanLyCoffe.Forms
             if (MessageBox.Show("Xác nhận xóa sản phẩm " + txtTenSanPham.Text + "?", "Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                 DialogResult.Yes)
             {
-                id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value.ToString());
+                id = Convert.ToInt32(dataGridView.CurrentRow.Cells["colID"].Value.ToString());
                 SanPham sp = context.SanPham.Find(id);
                 if (sp != null)
                 {
@@ -193,41 +226,98 @@ namespace QuanLyCoffe.Forms
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (!Directory.Exists(imagesFolder))
+                try
                 {
-                    Directory.CreateDirectory(imagesFolder);
-                }
+                    if (!Directory.Exists(imagesFolder)) Directory.CreateDirectory(imagesFolder);
 
-                if (picHinhAnh.Image != null)
+                    // 1. Giải phóng PictureBox ngay lập tức
+                    if (picHinhAnh.Image != null)
+                    {
+                        picHinhAnh.Image.Dispose();
+                        picHinhAnh.Image = null;
+                    }
+
+                    // Đảm bảo hệ thống nhả file ra hoàn toàn
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+
+                    string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    string ext = Path.GetExtension(openFileDialog.FileName);
+                    string newFile = fileName.GenerateSlug() + ext;
+                    string fileSavePath = Path.Combine(imagesFolder, newFile);
+
+                    // 2. THAY THẾ File.Copy BẰNG CÁCH GHI BYTE (Tránh lỗi File in use)
+                    byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
+                    File.WriteAllBytes(fileSavePath, imageBytes);
+
+                    // 3. Hiển thị lại ảnh lên PictureBox (Dùng MemoryStream để không khóa file mới)
+                    using (MemoryStream ms = new MemoryStream(imageBytes))
+                    {
+                        picHinhAnh.Image = Image.FromStream(ms);
+                    }
+
+                    // 4. Cập nhật Database
+                    id = Convert.ToInt32(dataGridView.CurrentRow.Cells["colID"].Value);
+                    var sp = context.SanPham.Find(id);
+                    if (sp != null)
+                    {
+                        sp.HinhAnh = newFile;
+                        context.SaveChanges();
+                    }
+
+                    // 5. Load lại Grid
+                    frmSanPham_Load(sender, e);
+                    MessageBox.Show("Cập nhật ảnh thành công!", "Thông báo");
+                }
+                catch (Exception ex)
                 {
-                    picHinhAnh.Image.Dispose();
-                    picHinhAnh.Image = null;
+                    MessageBox.Show("Lỗi khi lưu ảnh: " + ex.Message, "Lỗi hệ thống");
                 }
-
-                string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                string ext = Path.GetExtension(openFileDialog.FileName);
-                string newFile = fileName.GenerateSlug() + ext;
-
-                string fileSavePath = Path.Combine(imagesFolder, newFile);
-
-                if (openFileDialog.FileName != fileSavePath)
-                {
-                    File.Copy(openFileDialog.FileName, fileSavePath, true);
-                }
-
-                picHinhAnh.Image = new Bitmap(fileSavePath);
-
-                id = Convert.ToInt32(Convert.ToDecimal(dataGridView.CurrentRow.Cells["colID"].Value));
-                SanPham sp = context.SanPham.Find(id);
-
-                if (sp != null)
-                {
-                    sp.HinhAnh = newFile;
-                    context.SaveChanges();
-                }
-
-                frmSanPham_Load(sender, e);
             }
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView.CurrentRow != null)
+            {
+                // Lấy tên file ảnh từ ô "HinhAnh" của dòng đang chọn
+                var cellValue = dataGridView.CurrentRow.Cells["HinhAnh"].Value;
+
+                if (cellValue != null && !string.IsNullOrWhiteSpace(cellValue.ToString()))
+                {
+                    string fullPath = Path.Combine(imagesFolder, cellValue.ToString());
+
+                    if (File.Exists(fullPath))
+                    {
+                        // Giải phóng ảnh cũ trước khi nạp ảnh mới
+                        if (picHinhAnh.Image != null) picHinhAnh.Image.Dispose();
+
+                        // Nạp ảnh qua MemoryStream để KHÔNG khóa file
+                        using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                        {
+                            MemoryStream ms = new MemoryStream();
+                            fs.CopyTo(ms);
+                            ms.Seek(0, SeekOrigin.Begin);
+                            picHinhAnh.Image = Image.FromStream(ms);
+                        }
+                        return;
+                    }
+                }
+            }
+            // Nếu không có ảnh hoặc file không tồn tại
+            if (picHinhAnh.Image != null) picHinhAnh.Image.Dispose();
+            picHinhAnh.Image = null;
         }
     }
 }
+

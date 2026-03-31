@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyCoffe.Data;
 
@@ -11,9 +12,11 @@ using QuanLyCoffe.Data;
 namespace QuanLyCoffe.Migrations
 {
     [DbContext(typeof(QLCFDbContext))]
-    partial class QLCFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260321140721_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,21 +54,11 @@ namespace QuanLyCoffe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("BanID")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("DonGia")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("HoVaTenNhanVien")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("HoaDonID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NhanVienID")
                         .HasColumnType("int");
 
                     b.Property<int>("SanPhamID")
@@ -80,13 +73,45 @@ namespace QuanLyCoffe.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("BanID");
-
                     b.HasIndex("HoaDonID");
 
                     b.HasIndex("SanPhamID");
 
                     b.ToTable("ChiTietHoaDon");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.ChiTietPhieuNhap", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("DonGia")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("NguyenLieuID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhieuNhapID")
+                        .HasColumnType("int");
+
+                    b.Property<double>("SoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("ThanhTien")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NguyenLieuID");
+
+                    b.HasIndex("PhieuNhapID");
+
+                    b.ToTable("ChiTietPhieuNhap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.HoaDon", b =>
@@ -99,9 +124,6 @@ namespace QuanLyCoffe.Migrations
 
                     b.Property<int>("BanID")
                         .HasColumnType("int");
-
-                    b.Property<string>("GhiChuHoaDon")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayLap")
                         .HasColumnType("datetime2");
@@ -137,6 +159,64 @@ namespace QuanLyCoffe.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("LoaiSanPham");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.NguyenLieu", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("DonViTinh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NhaCungCapID")
+                        .HasColumnType("int");
+
+                    b.Property<double>("SoLuongTon")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TenNguyenLieu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NhaCungCapID");
+
+                    b.ToTable("NguyenLieu");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.NhaCungCap", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("DiaChi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DienThoai")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TenNCC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("NhaCungCap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.NhanVien", b =>
@@ -213,6 +293,31 @@ namespace QuanLyCoffe.Migrations
                     b.ToTable("PhanCongNhanVien");
                 });
 
+            modelBuilder.Entity("QuanLyCoffe.Data.PhieuNhap", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("NgayNhap")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NhaCungCapID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TongTien")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NhaCungCapID");
+
+                    b.ToTable("PhieuNhap");
+                });
+
             modelBuilder.Entity("QuanLyCoffe.Data.SanPham", b =>
                 {
                     b.Property<int>("ID")
@@ -247,12 +352,6 @@ namespace QuanLyCoffe.Migrations
 
             modelBuilder.Entity("QuanLyCoffe.Data.ChiTietHoaDon", b =>
                 {
-                    b.HasOne("QuanLyCoffe.Data.Ban", "TenBan")
-                        .WithMany()
-                        .HasForeignKey("BanID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("QuanLyCoffe.Data.HoaDon", "HoaDon")
                         .WithMany("ChiTietHoaDon")
                         .HasForeignKey("HoaDonID")
@@ -268,13 +367,30 @@ namespace QuanLyCoffe.Migrations
                     b.Navigation("HoaDon");
 
                     b.Navigation("SanPham");
+                });
 
-                    b.Navigation("TenBan");
+            modelBuilder.Entity("QuanLyCoffe.Data.ChiTietPhieuNhap", b =>
+                {
+                    b.HasOne("QuanLyCoffe.Data.NguyenLieu", "NguyenLieu")
+                        .WithMany("ChiTietPhieuNhap")
+                        .HasForeignKey("NguyenLieuID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QuanLyCoffe.Data.PhieuNhap", "PhieuNhap")
+                        .WithMany("ChiTietPhieuNhap")
+                        .HasForeignKey("PhieuNhapID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("NguyenLieu");
+
+                    b.Navigation("PhieuNhap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.HoaDon", b =>
                 {
-                    b.HasOne("QuanLyCoffe.Data.Ban", "TenBan")
+                    b.HasOne("QuanLyCoffe.Data.Ban", "Ban")
                         .WithMany("HoaDon")
                         .HasForeignKey("BanID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -286,9 +402,20 @@ namespace QuanLyCoffe.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("NhanVien");
+                    b.Navigation("Ban");
 
-                    b.Navigation("TenBan");
+                    b.Navigation("NhanVien");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.NguyenLieu", b =>
+                {
+                    b.HasOne("QuanLyCoffe.Data.NhaCungCap", "NhaCungCap")
+                        .WithMany("NguyenLieu")
+                        .HasForeignKey("NhaCungCapID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NhaCungCap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.PhanCongNhanVien", b =>
@@ -304,6 +431,17 @@ namespace QuanLyCoffe.Migrations
                         .IsRequired();
 
                     b.Navigation("NhanVien");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.PhieuNhap", b =>
+                {
+                    b.HasOne("QuanLyCoffe.Data.NhaCungCap", "NhaCungCap")
+                        .WithMany("PhieuNhap")
+                        .HasForeignKey("NhaCungCapID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NhaCungCap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.SanPham", b =>
@@ -334,11 +472,28 @@ namespace QuanLyCoffe.Migrations
                     b.Navigation("SanPham");
                 });
 
+            modelBuilder.Entity("QuanLyCoffe.Data.NguyenLieu", b =>
+                {
+                    b.Navigation("ChiTietPhieuNhap");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.NhaCungCap", b =>
+                {
+                    b.Navigation("NguyenLieu");
+
+                    b.Navigation("PhieuNhap");
+                });
+
             modelBuilder.Entity("QuanLyCoffe.Data.NhanVien", b =>
                 {
                     b.Navigation("HoaDon");
 
                     b.Navigation("PhanCongNhanVien");
+                });
+
+            modelBuilder.Entity("QuanLyCoffe.Data.PhieuNhap", b =>
+                {
+                    b.Navigation("ChiTietPhieuNhap");
                 });
 
             modelBuilder.Entity("QuanLyCoffe.Data.SanPham", b =>

@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace QuanLyCoffe.Data
 {
-    public class PhanCongNhanVien
+    internal class LichLam
     {
         public int ID { get; set; }
 
-        public int NhanVienID { get; set; }
+        public int NhanVienID { get; set; }  // khóa ngoại
+        public String  NgayLam { get; set; }
+        public string CaLam { get; set; }    // "6h-11h", "11h-15h",...
+
         public virtual NhanVien NhanVien { get; set; }
-        public string CaLam { get; set; }
-        public String NgayLam { get; set; }
     }
 }

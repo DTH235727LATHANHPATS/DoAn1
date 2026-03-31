@@ -91,6 +91,7 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông tin loại sản phẩm";
+            groupBox1.Enter += groupBox1_Enter;
             // 
             // txtMoTa
             // 
@@ -281,6 +282,7 @@
             groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "Danh sách sản phẩm";
+            groupBox2.Enter += groupBox2_Enter;
             // 
             // dataGridView
             // 
@@ -297,6 +299,7 @@
             dataGridView.RowHeadersWidth = 51;
             dataGridView.Size = new Size(503, 461);
             dataGridView.TabIndex = 0;
+            dataGridView.SelectionChanged += dataGridView_SelectionChanged;
             // 
             // colID
             // 
@@ -328,10 +331,11 @@
             // 
             // HinhAnh
             // 
-            HinhAnh.DataPropertyName = "HinhAnh";
             HinhAnh.HeaderText = "Hình Ảnh";
             HinhAnh.MinimumWidth = 6;
             HinhAnh.Name = "HinhAnh";
+            HinhAnh.Resizable = DataGridViewTriState.True;
+            HinhAnh.SortMode = DataGridViewColumnSortMode.Automatic;
             // 
             // frmSanPham
             // 
@@ -341,7 +345,7 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Name = "frmSanPham";
-            Text = "frmSanPham";
+            Text = "Sản Phẩm";
             Load += frmSanPham_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

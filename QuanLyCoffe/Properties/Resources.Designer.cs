@@ -83,6 +83,36 @@ namespace QuanLyCoffe.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap cafe_e_coffee_trung_nguyen_53 {
+            get {
+                object obj = ResourceManager.GetObject("cafe-e-coffee-trung-nguyen-53", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cafe_e_coffee_trung_nguyen_531 {
+            get {
+                object obj = ResourceManager.GetObject("cafe-e-coffee-trung-nguyen-531", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TrungNguyen {
+            get {
+                object obj = ResourceManager.GetObject("TrungNguyen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap TrungNguyen2 {
             get {
                 object obj = ResourceManager.GetObject("TrungNguyen2", resourceCulture);

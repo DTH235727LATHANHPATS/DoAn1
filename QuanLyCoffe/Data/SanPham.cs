@@ -14,7 +14,6 @@ namespace QuanLyCoffe.Data
         public string TenSanPham { get; set; }
         public int Gia { get; set; }
         public string? HinhAnh { get; set; }  // Đường dẫn hình ảnh
-
         public string? MoTa { get; set; }     // Mô tả sản phẩm
 
         public int LoaiSanPhamID { get; set; }

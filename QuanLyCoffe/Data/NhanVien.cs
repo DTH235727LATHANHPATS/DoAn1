@@ -15,7 +15,10 @@ namespace QuanLyCoffe.Data
         public DateTime NgaySinh { get; set; }
         public string DienThoai { get; set; }
         public string DiaChi { get; set; }
-        public string ChucVu { get; set; }
+        public bool ChucVu { get; set; }
+        public string TenDangNhap { get; set; }
+
+        public string MatKhau { get; set; }
 
         public virtual ObservableCollectionListSource<HoaDon> HoaDon { get; } = new();
         public virtual ObservableCollectionListSource<PhanCongNhanVien> PhanCongNhanVien { get; } = new();

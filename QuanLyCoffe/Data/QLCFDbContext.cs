@@ -17,10 +17,6 @@ namespace QuanLyCoffe.Data
         public DbSet<PhanCongNhanVien> PhanCongNhanVien { get; set; }
         public DbSet<HoaDon> HoaDon { get; set; }
         public DbSet<ChiTietHoaDon> ChiTietHoaDon { get; set; }
-        public DbSet<NhaCungCap> NhaCungCap { get; set; }
-        public DbSet<NguyenLieu> NguyenLieu { get; set; }
-        public DbSet<PhieuNhap> PhieuNhap { get; set; }
-        public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhap { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,9 +35,6 @@ namespace QuanLyCoffe.Data
                 .Property(p => p.TongTien)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<PhieuNhap>()
-                .Property(p => p.TongTien)
-                .HasPrecision(18, 2);
 
             modelBuilder.Entity<ChiTietHoaDon>()
                 .Property(p => p.DonGia)
@@ -50,21 +43,6 @@ namespace QuanLyCoffe.Data
             modelBuilder.Entity<ChiTietHoaDon>()
                 .Property(p => p.ThanhTien)
                 .HasPrecision(18, 2);
-
-            modelBuilder.Entity<ChiTietPhieuNhap>()
-                .Property(p => p.DonGia)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<ChiTietPhieuNhap>()
-                .Property(p => p.ThanhTien)
-                .HasPrecision(18, 2);
-
-            // SỬA LỖI CASCADE
-            modelBuilder.Entity<ChiTietPhieuNhap>()
-                .HasOne(ct => ct.PhieuNhap)
-                .WithMany(p => p.ChiTietPhieuNhap)
-                .HasForeignKey(ct => ct.PhieuNhapID)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ChiTietHoaDon>()
                 .HasOne(ct => ct.HoaDon)
